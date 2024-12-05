@@ -16,11 +16,11 @@ const showusers = async (req, res) => {
 const createusers = async (req, res) => {
     try {
         const id= uuidv4();
-        const { email, password } = req.body; 
+        const { email, password,} = req.body; 
         const pass= await bcrypt.hash(password ,10 );
         console.log(pass);
         const conn= await connection();
-        const [result] = await conn.query('INSERT INTO data (id, email, password) VALUES (?, ?, ?)', [id, email, pass]);
+        const [result] = await conn.query('INSERT INTO data (id, email, password, roleid ) VALUES (?, ?, ?, ?)', [id, email, pass, '2']);
 
        
         res.status(201).json({ message: "User created successfully" });

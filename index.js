@@ -3,12 +3,14 @@ const errorhandler = require('./middleware/errormiddleware');
 const router = require('./routes/userroutes');
 const connection = require('./config/connection');
 const cookieParser = require('cookie-parser');
+const taskrouter = require('./routes/taskroute');
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(router);
+app.use(taskrouter);
 app.use(errorhandler);  
-app.use(cookieParser);
 
 
 connection().then(db => {
