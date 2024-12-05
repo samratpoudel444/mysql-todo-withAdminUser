@@ -1,10 +1,7 @@
 const express = require('express');
 const controller = require('../controllers/user');
-const { LoginUser, logOutUser } = require('../controllers/auth');
-const verifyUser = require('../middleware/verifyuser');
-const { verifyAdmin } = require('../middleware/adminverify');
+const {verifyUser, verifyAdmin} = require('../middleware/verifyuser');
 const { preventSelfDeletion } = require('../middleware/preventselfdeletion');
-
 
 const router = express.Router();  
 
@@ -14,8 +11,6 @@ router.route('/delete').delete(verifyAdmin,preventSelfDeletion, controller.delet
 router.route('/update').put(verifyUser, controller.updateuser);
 
 
-router.route('/login').post(LoginUser);
-router.route('/logout').delete(logOutUser);
 
 
 

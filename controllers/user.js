@@ -3,9 +3,8 @@ const {v4: uuidv4}= require('uuid');
 const bcrypt= require('bcrypt');
 const showusers = async (req, res) => {
     try {
-        const { email } = req.body; 
         const conn= await connection();
-        const [rows] = await conn.query('SELECT id, email, password FROM data WHERE email = ?', [email]);
+        const [rows] = await conn.query('SELECT id, email, password FROM  DATA WHERE roleid = ? ',[2]);
         res.json(rows);
     } catch (err) {
         console.log(err);

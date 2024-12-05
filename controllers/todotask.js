@@ -3,22 +3,38 @@ const verifyUser = require('../middleware/verifyuser');
 const connection = require('../config/connection');
 const {v4: uuidv4} = require('uuid')
 
-async function taskDo(req, resp, next)
-{
-    try{
-        const date= new Date();
-        const id= uuidv4();
-        const{ email, task, duedate, status, priority}= req.body;
-        const db= await connection();
-        const [rows, fields] = await db.query('INSERT INTO tasks (taskid, task, email, created_date, due_date, status, priority) VALUES (?, ?, ?, ?, ?, ?, ?)',[id, task, email, date, duedate, status, priority])
-           return resp.send('the data is inserteed');
 
-    }
-    catch(err)
-    {
-        console.log(err);
+async function taskDo(req, resp, next) {
+    try {
+        const date = new Date();
+        const id = uuidv4();
+        const { email, task, duedate, status, priority } = req.body;
+
+    
+        const db = await connection();
+
+      
+        const [rows, field] = await db.query('SELECT roleid FROM data WHERE email = ?', [email]);
+
+ 
+        if (!rows || rows.length === 0) {
+            return resp.send('Please give task to a valid user');
+        } else {
+       
+            const [insertResult, fields] = await db.query(
+                'INSERT INTO tasks (taskid, task, email, created_date, due_date, status, priority) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                [id, task, email, date, duedate, status, priority]
+            );
+
+            return resp.send('The data is inserted');
+        }
+
+    } catch (err) {
+        console.error(err);
+        return resp.status(500).send('Internal server error');
     }
 }
+
 
 async function taskPriority(req, resp, next)
 {
@@ -82,10 +98,6 @@ async function taskStatus(req, resp, next)
         const db= await connection();
         const [rows, field]= await db.query('update tasks set status =? where email =? and task= ?',['completed',email, task ]);
     }
-    else
-    {
-
-    }
 }
 catch(err)
 {
@@ -93,4 +105,39 @@ catch(err)
 }
 }
 
-module.exports= {taskDo, taskPriority, taskStatus};
+async function taskSearch(req, resp, next)
+{
+    try{
+        const { task }= req.body;
+        if(!task)
+        {
+            return resp.send("please provide the search name");
+        }
+        const db= await connection();
+        const[rows, field]= await db.query('select * from tasks where task like ? ',[`%${task}%`]);
+        return resp.send(rows);
+    }
+    catch(err)
+    {
+        console.log(err);
+    }
+}
+
+async function seeTask(req,resp,next)
+{
+    try{
+        const db= await connection();
+        const[rows, field]= await db.query('select task, email from tasks');
+        if(rows.length == 0)
+        {
+            return resp.send("there is no task avilable")
+        }
+        return resp.send(rows);
+    }
+    catch(err)
+    {
+        console.log(err);
+    }
+}
+
+module.exports= {taskDo, taskPriority, taskStatus, taskSearch, seeTask};

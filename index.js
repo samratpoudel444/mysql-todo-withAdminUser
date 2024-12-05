@@ -1,15 +1,18 @@
 const express = require('express');
 const errorhandler = require('./middleware/errormiddleware');
-const router = require('./routes/userroutes');
+const userRouter = require('./routes/userroutes');
 const connection = require('./config/connection');
 const cookieParser = require('cookie-parser');
-const taskrouter = require('./routes/taskroute');
+const taskRouter = require('./routes/taskroute');
+const loginRouter = require('./routes/loginRoute');
+
 const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(router);
-app.use(taskrouter);
+app.use(loginRouter);
+app.use(userRouter);
+app.use(taskRouter);
 app.use(errorhandler);  
 
 
